@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import { User } from "@/app/types/user";
 import { Dialog } from "primereact/dialog";
@@ -13,15 +14,23 @@ interface UserFormProps {
 }
 
 const UserForm: React.FC<UserFormProps> = ({
-  user,
-  visible,
+  user = null,
+  visible = false,
   onHide,
   onSave,
 }) => {
+  // States
   const [editedUser, setEditedUser] = useState<User | null>(user);
 
+  // Update editedUser when user prop changes
+  if (user !== editedUser) {
+    setEditedUser(user);
+  }
+
+  // Data
   const statusOptions = ["ACTIVO", "INACTIVO"];
 
+  // Functions
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setEditedUser((prevUser) =>
@@ -29,10 +38,9 @@ const UserForm: React.FC<UserFormProps> = ({
     );
   };
 
-  const handleDropdownChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+  const handleDropdownChange = (e: { value: string }) => {
     setEditedUser((prevUser) =>
-      prevUser ? { ...prevUser, [name]: value } : null
+      prevUser ? { ...prevUser, estado: e.value } : null
     );
   };
 
@@ -47,16 +55,6 @@ const UserForm: React.FC<UserFormProps> = ({
     <Dialog header="Edit User" visible={visible} onHide={onHide}>
       {editedUser && (
         <form onSubmit={handleSubmit}>
-          <div className="p-field">
-            <label htmlFor="id">ID</label>
-            <InputText
-              id="id"
-              name="id"
-              value={editedUser.id}
-              onChange={handleChange}
-              disabled
-            />
-          </div>
           <div className="p-field">
             <label htmlFor="usuario">Usuario</label>
             <InputText
@@ -73,7 +71,7 @@ const UserForm: React.FC<UserFormProps> = ({
               name="estado"
               value={editedUser.estado}
               options={statusOptions}
-              onChange={handleDropdownChange}
+              onChange={(e) => handleDropdownChange(e)}
               placeholder="Select status"
             />
           </div>

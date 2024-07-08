@@ -1,7 +1,3 @@
-// import "primereact/resources/primereact.min.css";
-// import "primeicons/primeicons.css";
-// import "primereact/resources/themes/lara-light-cyan/theme.css";
-
 import { getUsers } from "@/lib/userServices";
 import { User } from "./types/user";
 import { UserList } from "./clients/sections";
@@ -15,9 +11,7 @@ export default async function Home() {
   return (
     <div className="p-m-4">
       <Suspense fallback={<Loading />}>
-        <UserList users={users}>
-          <Table />
-        </UserList>
+        <UserList users={users} />
       </Suspense>
     </div>
   );

@@ -1,0 +1,13 @@
+.containerHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: 20px;
+}
+
+.w100 {
+  width: 100%;
+}
+.buttonSmall {
+  width: 100px;
+}

@@ -1,17 +1,17 @@
 import { getUsers } from "@/lib/userServices";
 import { User } from "./types/user";
 import { UserList } from "./clients/sections";
-import { Table } from "./server/components";
 import { Suspense } from "react";
 import Loading from "./loading";
 
 export default async function Home() {
-  const users: User[] = await getUsers(11, 1);
+  const initialData: User[] = await getUsers(10, 1); // Obtener los primeros 10 usuarios
+  const totalRecords = 120; // Este valor debería venir del servidor
 
   return (
     <div className="p-m-4">
       <Suspense fallback={<Loading />}>
-        <UserList users={users} />
+        <UserList initialData={initialData} totalRecords={totalRecords} />
       </Suspense>
     </div>
   );

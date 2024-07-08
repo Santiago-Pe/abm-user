@@ -1,25 +1,24 @@
 "use client";
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, useEffect, ChangeEvent } from "react";
 import style from "./userList.module.css";
 import { User } from "@/app/types/user";
-import { FilterMatchMode, FilterOperator } from "primereact/api";
+import { FilterMatchMode } from "primereact/api";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { Dialog } from "primereact/dialog";
-import Link from "next/link";
-import { text } from "stream/consumers";
 import { UserForm } from "../../forms";
+import { Paginator, PaginatorPageChangeEvent } from "primereact/paginator";
 
 interface UserListProps {
-  //children: React.ReactElement<any>;
-  users: User[];
+  initialData: User[];
+  totalRecords: number;
 }
 
-const UserList: React.FC<UserListProps> = ({ users }) => {
+const UserList: React.FC<UserListProps> = ({ initialData, totalRecords }) => {
   // States
+  const [users, setUsers] = useState<User[]>(initialData);
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
   const [statusFilterValue, setStatusFilterValue] = useState<string | null>(
     null
@@ -33,6 +32,21 @@ const UserList: React.FC<UserListProps> = ({ users }) => {
   });
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isDialogVisible, setIsDialogVisible] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [first, setFirst] = useState(0);
+  const [rows, setRows] = useState(10);
+
+  const loadUsers = async (page: number) => {
+    setLoading(true);
+    const response = await fetch(`/api/users?page=${page}&limit=${rows}`);
+    const data = await response.json();
+    setUsers(data.users);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    loadUsers(first / rows + 1);
+  }, [first, rows]);
 
   // Data
   const statusOptions = ["ACTIVO", "INACTIVO"];
@@ -82,17 +96,20 @@ const UserList: React.FC<UserListProps> = ({ users }) => {
   };
   const onStatusFilterChange = (e: DropdownChangeEvent) => {
     const value = e.value;
-    console.log(value);
     let _filters = { ...filters };
     _filters["estado"].value = value;
     setFilters(_filters);
     setStatusFilterValue(value);
   };
+  const onPageChange = (e: PaginatorPageChangeEvent) => {
+    setFirst(e.first);
+    setRows(e.rows);
+  };
   const openDialog = (user: User) => {
-    console.log("click");
     setSelectedUser(user);
     setIsDialogVisible(true);
   };
+
   const nameTemplate = (rowData: User) => {
     return (
       <Button
@@ -103,6 +120,7 @@ const UserList: React.FC<UserListProps> = ({ users }) => {
       />
     );
   };
+
   const handleSave = (updatedUser: User) => {
     // Aquí podrías actualizar la lista de usuarios con el usuario editado
     // por simplicidad solo se muestra el console.log
@@ -116,9 +134,8 @@ const UserList: React.FC<UserListProps> = ({ users }) => {
     <>
       <DataTable
         value={users}
-        paginator
-        rows={5}
         header={header}
+        //loading={loading}
         size="normal"
         filters={filters}
         globalFilterFields={["name", "status"]}
@@ -135,6 +152,13 @@ const UserList: React.FC<UserListProps> = ({ users }) => {
           />
         ))}
       </DataTable>
+      <Paginator
+        first={first}
+        rows={rows}
+        totalRecords={totalRecords}
+        rowsPerPageOptions={[10, 20, 30]}
+        onPageChange={onPageChange}
+      />
 
       <UserForm
         user={selectedUser}

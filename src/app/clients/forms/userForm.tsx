@@ -6,6 +6,8 @@ import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
 import { useFormFields } from "../hooks/useForm";
+import { useRouter } from "next/navigation";
+import { postUser, putUser } from "@/app/api/actions/userActions";
 
 interface UserFormProps {
   user?: User | null;
@@ -20,6 +22,7 @@ const UserForm: React.FC<UserFormProps> = ({
   useButton = false,
   callback = null,
 }) => {
+  const router = useRouter();
   // Custom Hook and States
   const [isDialogVisible, setIsDialogVisible] = useState(false);
   const [fields, handleFieldChange, setValues] = useFormFields({
@@ -32,65 +35,65 @@ const UserForm: React.FC<UserFormProps> = ({
   // Data
   const statusOptions = ["ACTIVO", "INACTIVO"];
 
-  const getUser = async (page: number) => {
-    const response = await fetch(
-      `https://staging.duxsoftware.com.ar/api/personal?sector=2222&_limit=${5}&_page=${page}`
-    );
-    const data = await response.json();
-  };
-  const postUser = async (fields: any) => {
-    try {
-      const response = await fetch(
-        `https://staging.duxsoftware.com.ar/api/personal?sector=2222`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(fields),
-        }
-      );
+  // const getUser = async (page: number) => {
+  //   const response = await fetch(
+  //     `https://staging.duxsoftware.com.ar/api/personal?sector=2222&_limit=${5}&_page=${page}`
+  //   );
+  //   const data = await response.json();
+  // };
+  // const postUser = async (fields: any) => {
+  //   try {
+  //     const response = await fetch(
+  //       `https://staging.duxsoftware.com.ar/api/personal?sector=2222`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify(fields),
+  //       }
+  //     );
 
-      if (!response.ok) {
-        throw new Error("Failed to post user");
-      }
+  //     if (!response.ok) {
+  //       throw new Error("Failed to post user");
+  //     }
 
-      const data = await response.json();
+  //     const data = await response.json();
 
-      handleDialog();
+  //     handleDialog();
 
-      return data;
-    } catch (error) {
-      console.error("Error posting user:", error);
-      throw error;
-    }
-  };
-  const putUser = async (fields: any) => {
-    try {
-      const response = await fetch(
-        `https://staging.duxsoftware.com.ar/api/personal/${fields.id}?sector=2222`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(fields),
-        }
-      );
+  //     return data;
+  //   } catch (error) {
+  //     console.error("Error posting user:", error);
+  //     throw error;
+  //   }
+  // };
+  // const putUser = async (fields: any) => {
+  //   try {
+  //     const response = await fetch(
+  //       `https://staging.duxsoftware.com.ar/api/personal/${fields.id}?sector=2222`,
+  //       {
+  //         method: "PUT",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify(fields),
+  //       }
+  //     );
 
-      if (!response.ok) {
-        throw new Error("Failed to post user");
-      }
+  //     if (!response.ok) {
+  //       throw new Error("Failed to post user");
+  //     }
 
-      const data = await response.json();
-      handleDialog();
+  //     const data = await response.json();
+  //     handleDialog();
 
-      return data;
-    } catch (error) {
-      console.error("Error posting user:", error);
-      throw error;
-    }
-  };
+  //     return data;
+  //   } catch (error) {
+  //     console.error("Error posting user:", error);
+  //     throw error;
+  //   }
+  // };
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     // build boyd
@@ -103,8 +106,35 @@ const UserForm: React.FC<UserFormProps> = ({
     }
   };
   const handleDialog = () => {
+    let emptyObject = {
+      id: "",
+      usuario: "",
+      estado: "",
+      sector: "",
+    };
+
     setIsDialogVisible((prevState) => !prevState);
     clearState?.();
+    setValues(emptyObject);
+  };
+
+  // Server actions
+  const featchUser = async (FormData: any) => {
+    let response;
+    // if (user?.id) {
+    //   console.log("edicion");
+    //   response = await putUser(user?.id, fields);
+    // } else {
+    //   console.log("creacion");
+    //   response = await postUser(fields);
+    // }
+    user?.id
+      ? (response = await putUser(user?.id, fields))
+      : (response = await postUser(fields));
+    handleDialog();
+    router.refresh();
+
+    return response;
   };
 
   useEffect(() => {
@@ -119,6 +149,8 @@ const UserForm: React.FC<UserFormProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
+
+  console.log("render");
 
   return (
     <>
@@ -135,7 +167,8 @@ const UserForm: React.FC<UserFormProps> = ({
         visible={user !== null || isDialogVisible}
         onHide={handleDialog}
       >
-        <form onSubmit={handleSubmit}>
+        {/* <form onSubmit={handleSubmit}> */}
+        <form action={featchUser}>
           <div className="p-field">
             <label htmlFor="usuario">Usuario</label>
             <InputText

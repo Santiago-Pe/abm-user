@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useCallback } from "react";
 import style from "./userList.module.css";
 import { User } from "@/app/types/user";
 import { FilterMatchMode } from "primereact/api";
@@ -10,13 +10,17 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { UserForm } from "../../forms";
 import { Paginator, PaginatorPageChangeEvent } from "primereact/paginator";
+import Header from "@/app/server/components/header/header";
 
 interface UserListProps {
   initialData: User[];
   totalRecords: number;
 }
 
-const UserList: React.FC<UserListProps> = ({ initialData, totalRecords }) => {
+const UserList: React.FC<UserListProps> = ({
+  initialData = [],
+  totalRecords,
+}) => {
   // States
   const [users, setUsers] = useState<User[]>(initialData);
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
@@ -31,22 +35,8 @@ const UserList: React.FC<UserListProps> = ({ initialData, totalRecords }) => {
     estado: { value: null as string | null, matchMode: FilterMatchMode.EQUALS },
   });
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [isDialogVisible, setIsDialogVisible] = useState(false);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [first, setFirst] = useState(0);
-  const [rows, setRows] = useState(10);
-
-  const loadUsers = async (page: number) => {
-    setLoading(true);
-    const response = await fetch(`/api/users?page=${page}&limit=${rows}`);
-    const data = await response.json();
-    setUsers(data.users);
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    loadUsers(first / rows + 1);
-  }, [first, rows]);
+  const [first, setFirst] = useState(1);
+  const [rows, setRows] = useState(5);
 
   // Data
   const statusOptions = ["ACTIVO", "INACTIVO"];
@@ -58,6 +48,14 @@ const UserList: React.FC<UserListProps> = ({ initialData, totalRecords }) => {
   ];
 
   // Functions
+  const loadUsers = async (page: number) => {
+    console.log("refetch");
+    const response = await fetch(
+      `https://staging.duxsoftware.com.ar/api/personal?sector=2222&_limit=${rows}&_page=${page}`
+    );
+    const data = await response.json();
+    setUsers(data);
+  };
   const renderHeader = () => {
     return (
       <div className={style.containerHeader}>
@@ -78,6 +76,11 @@ const UserList: React.FC<UserListProps> = ({ initialData, totalRecords }) => {
             className={style.w100}
           />
         </div>
+        <Button
+          className={style.buttonSmall}
+          label="Re"
+          onClick={() => loadUsers(1)}
+        />
         <Button
           icon="pi pi-filter-fill"
           className={style.buttonSmall}
@@ -104,12 +107,11 @@ const UserList: React.FC<UserListProps> = ({ initialData, totalRecords }) => {
   const onPageChange = (e: PaginatorPageChangeEvent) => {
     setFirst(e.first);
     setRows(e.rows);
+    loadUsers(e.first / e.rows + 1);
   };
   const openDialog = (user: User) => {
     setSelectedUser(user);
-    setIsDialogVisible(true);
   };
-
   const nameTemplate = (rowData: User) => {
     return (
       <Button
@@ -120,18 +122,17 @@ const UserList: React.FC<UserListProps> = ({ initialData, totalRecords }) => {
       />
     );
   };
-
-  const handleSave = (updatedUser: User) => {
-    // Aquí podrías actualizar la lista de usuarios con el usuario editado
-    // por simplicidad solo se muestra el console.log
-    console.log("Usuario actualizado:", updatedUser);
-    setIsDialogVisible(false);
+  const clearState = useCallback(() => {
+    setSelectedUser(null);
+  }, []);
+  const handleRefetch = async () => {
+    await loadUsers(first / rows + 1);
   };
-
   const header = renderHeader();
 
   return (
     <>
+      <Header title="Dashboard" endComponent={<UserForm useButton={true} />} />
       <DataTable
         value={users}
         header={header}
@@ -156,15 +157,14 @@ const UserList: React.FC<UserListProps> = ({ initialData, totalRecords }) => {
         first={first}
         rows={rows}
         totalRecords={totalRecords}
-        rowsPerPageOptions={[10, 20, 30]}
         onPageChange={onPageChange}
       />
 
       <UserForm
         user={selectedUser}
-        visible={isDialogVisible}
-        onHide={() => setIsDialogVisible(false)}
-        onSave={handleSave}
+        clearState={clearState}
+        useButton={false}
+        callback={handleRefetch}
       />
     </>
   );

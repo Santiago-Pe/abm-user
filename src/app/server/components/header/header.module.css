@@ -1,0 +1,19 @@
+/* src/components/atoms/Header/Header.module.css */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.title {
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.endComponent {
+  display: flex;
+  align-items: center;
+}

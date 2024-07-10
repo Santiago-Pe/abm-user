@@ -1,67 +1,148 @@
 "use client";
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import { User } from "@/app/types/user";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
+import { useFormFields } from "../hooks/useForm";
 
 interface UserFormProps {
-  user: User | null;
-  visible: boolean;
-  onHide: () => void;
-  onSave: (updatedUser: User) => void;
+  user?: User | null;
+  clearState?: () => void;
+  callback?: () => void;
+  useButton: boolean;
 }
 
 const UserForm: React.FC<UserFormProps> = ({
   user = null,
-  visible = false,
-  onHide,
-  onSave,
+  clearState = null,
+  useButton = false,
+  callback = null,
 }) => {
-  // States
-  const [editedUser, setEditedUser] = useState<User | null>(user);
-
-  // Update editedUser when user prop changes
-  if (user !== editedUser) {
-    setEditedUser(user);
-  }
+  // Custom Hook and States
+  const [isDialogVisible, setIsDialogVisible] = useState(false);
+  const [fields, handleFieldChange, setValues] = useFormFields({
+    id: user?.id?.toString() || "",
+    usuario: user?.usuario || "",
+    estado: user?.estado || "",
+    sector: user?.sector || "",
+  });
 
   // Data
   const statusOptions = ["ACTIVO", "INACTIVO"];
 
-  // Functions
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setEditedUser((prevUser) =>
-      prevUser ? { ...prevUser, [name]: value } : null
+  const getUser = async (page: number) => {
+    const response = await fetch(
+      `https://staging.duxsoftware.com.ar/api/personal?sector=2222&_limit=${5}&_page=${page}`
     );
+    const data = await response.json();
   };
+  const postUser = async (fields: any) => {
+    try {
+      const response = await fetch(
+        `https://staging.duxsoftware.com.ar/api/personal?sector=2222`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(fields),
+        }
+      );
 
-  const handleDropdownChange = (e: { value: string }) => {
-    setEditedUser((prevUser) =>
-      prevUser ? { ...prevUser, estado: e.value } : null
-    );
-  };
+      if (!response.ok) {
+        throw new Error("Failed to post user");
+      }
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (editedUser) {
-      onSave(editedUser);
+      const data = await response.json();
+
+      handleDialog();
+
+      return data;
+    } catch (error) {
+      console.error("Error posting user:", error);
+      throw error;
     }
   };
+  const putUser = async (fields: any) => {
+    try {
+      const response = await fetch(
+        `https://staging.duxsoftware.com.ar/api/personal/${fields.id}?sector=2222`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(fields),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to post user");
+      }
+
+      const data = await response.json();
+      handleDialog();
+
+      return data;
+    } catch (error) {
+      console.error("Error posting user:", error);
+      throw error;
+    }
+  };
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): void => {
+    e.preventDefault();
+    // build boyd
+    if (user) {
+      await putUser(fields);
+      callback?.();
+    } else {
+      await postUser(fields);
+      await getUser(10);
+    }
+  };
+  const handleDialog = () => {
+    setIsDialogVisible((prevState) => !prevState);
+    clearState?.();
+  };
+
+  useEffect(() => {
+    if (user !== null) {
+      setIsDialogVisible(true);
+      setValues({
+        id: user.id.toString(),
+        usuario: user.usuario,
+        estado: user.estado,
+        sector: user.sector,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   return (
-    <Dialog header="Edit User" visible={visible} onHide={onHide}>
-      {editedUser && (
+    <>
+      {useButton && (
+        <Button
+          type="button"
+          label="Create user"
+          className="p-button-success"
+          onClick={handleDialog}
+        />
+      )}
+      <Dialog
+        header="Edit User"
+        visible={user !== null || isDialogVisible}
+        onHide={handleDialog}
+      >
         <form onSubmit={handleSubmit}>
           <div className="p-field">
             <label htmlFor="usuario">Usuario</label>
             <InputText
               id="usuario"
               name="usuario"
-              value={editedUser.usuario}
-              onChange={handleChange}
+              value={fields.usuario}
+              onChange={handleFieldChange}
             />
           </div>
           <div className="p-field">
@@ -69,9 +150,14 @@ const UserForm: React.FC<UserFormProps> = ({
             <Dropdown
               id="estado"
               name="estado"
-              value={editedUser.estado}
-              options={statusOptions}
-              onChange={(e) => handleDropdownChange(e)}
+              value={fields.estado}
+              options={statusOptions.map((option) => ({
+                label: option,
+                value: option,
+              }))}
+              onChange={(e) =>
+                handleFieldChange({ target: { id: "estado", value: e.value } })
+              }
               placeholder="Select status"
             />
           </div>
@@ -80,14 +166,14 @@ const UserForm: React.FC<UserFormProps> = ({
             <InputText
               id="sector"
               name="sector"
-              value={editedUser.sector}
-              onChange={handleChange}
+              value={fields.sector}
+              onChange={handleFieldChange}
             />
           </div>
           <Button type="submit" label="Save" className="p-button-success" />
         </form>
-      )}
-    </Dialog>
+      </Dialog>
+    </>
   );
 };
 

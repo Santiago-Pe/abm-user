@@ -1,6 +1,10 @@
 'use server'
-export async function addUser(id: string | number, formData) {
-  
-    console.log('ID', id)
-    console.log('DATA-FROM', formData)
+
+import { updateUser } from "@/lib/userServices"
+
+export async function putUser(id: number , formData) {
+    const response = await updateUser(id, formData.formData)
+    console.log(response);
+    return response
+    
 }

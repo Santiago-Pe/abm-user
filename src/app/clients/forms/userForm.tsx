@@ -6,7 +6,7 @@ import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
 import { useFormState, useFormStatus } from "react-dom";
-import { addUser } from "@/app/api/actions/users";
+import { addUser, putUser } from "@/app/api/actions/users";
 import { useRouter } from "next/navigation";
 
 interface UserFormProps {
@@ -31,12 +31,13 @@ const UserForm: React.FC<UserFormProps> = ({
     <Dialog header="Edit User" visible={visible} onHide={onHide}>
       <form
         action={async (FormData) => {
-          await addUser(FormData, user?.id);
+          await putUser(FormData, user?.id);
           router.refresh();
         }}
       >
-        <input type="text" name="name" />
-        <input type="text" name="lastname" />
+        <input type="text" name="usuario" />
+        <input type="text" name="sector" value={user?.sector} />
+        <input type="text" name="estado" value={user?.estado} />
         <button type="submit">Update User Name</button>
       </form>
     </Dialog>

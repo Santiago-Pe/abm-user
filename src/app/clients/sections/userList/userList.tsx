@@ -49,7 +49,6 @@ const UserList: React.FC<UserListProps> = ({
 
   // Functions
   const loadUsers = async (page: number) => {
-    console.log("refetch");
     const response = await fetch(
       `https://staging.duxsoftware.com.ar/api/personal?sector=2222&_limit=${rows}&_page=${page}`
     );
@@ -139,7 +138,7 @@ const UserList: React.FC<UserListProps> = ({
         //loading={loading}
         size="normal"
         filters={filters}
-        globalFilterFields={["name", "status"]}
+        globalFilterFields={["usuario", "estado"]}
         filterDisplay="menu"
         className="w100"
       >

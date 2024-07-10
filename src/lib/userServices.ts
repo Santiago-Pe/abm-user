@@ -40,3 +40,21 @@ export const createUser = async (userData: Partial<User>) => {
 
   return await response.json();
 };
+export const updateUser = async (userId: number, userData: Partial<User>) => {
+  let url = `${API_URL}/${userId}?sector=${SECTOR}`
+  const response = await fetch(url, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(userData),
+  });
+
+
+  
+  if (!response.ok) {
+    throw new Error('Failed to update user');
+  }
+
+  return await response.json();
+};

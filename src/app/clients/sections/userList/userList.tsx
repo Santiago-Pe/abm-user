@@ -122,9 +122,6 @@ const UserList: React.FC<UserListProps> = ({ initialData, totalRecords }) => {
   };
 
   const handleSave = (updatedUser: User) => {
-    // Aquí podrías actualizar la lista de usuarios con el usuario editado
-    // por simplicidad solo se muestra el console.log
-    console.log("Usuario actualizado:", updatedUser);
     setIsDialogVisible(false);
   };
 

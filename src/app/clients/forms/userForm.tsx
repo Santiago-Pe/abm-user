@@ -5,6 +5,9 @@ import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
+import { useFormState, useFormStatus } from "react-dom";
+import { addUser } from "@/app/api/actions/users";
+import { useRouter } from "next/navigation";
 
 interface UserFormProps {
   user: User | null;
@@ -19,74 +22,23 @@ const UserForm: React.FC<UserFormProps> = ({
   onHide,
   onSave,
 }) => {
-  // States
-  const [editedUser, setEditedUser] = useState<User | null>(user);
+  const router = useRouter();
+  const { data } = useFormStatus();
 
-  // Update editedUser when user prop changes
-  if (user !== editedUser) {
-    setEditedUser(user);
-  }
-
-  // Data
-  const statusOptions = ["ACTIVO", "INACTIVO"];
-
-  // Functions
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setEditedUser((prevUser) =>
-      prevUser ? { ...prevUser, [name]: value } : null
-    );
-  };
-
-  const handleDropdownChange = (e: { value: string }) => {
-    setEditedUser((prevUser) =>
-      prevUser ? { ...prevUser, estado: e.value } : null
-    );
-  };
-
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (editedUser) {
-      onSave(editedUser);
-    }
-  };
+  // const addUserFunc = addUser.bind(data, user?.id);
 
   return (
     <Dialog header="Edit User" visible={visible} onHide={onHide}>
-      {editedUser && (
-        <form onSubmit={handleSubmit}>
-          <div className="p-field">
-            <label htmlFor="usuario">Usuario</label>
-            <InputText
-              id="usuario"
-              name="usuario"
-              value={editedUser.usuario}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="p-field">
-            <label htmlFor="estado">Estado</label>
-            <Dropdown
-              id="estado"
-              name="estado"
-              value={editedUser.estado}
-              options={statusOptions}
-              onChange={(e) => handleDropdownChange(e)}
-              placeholder="Select status"
-            />
-          </div>
-          <div className="p-field">
-            <label htmlFor="sector">Sector</label>
-            <InputText
-              id="sector"
-              name="sector"
-              value={editedUser.sector}
-              onChange={handleChange}
-            />
-          </div>
-          <Button type="submit" label="Save" className="p-button-success" />
-        </form>
-      )}
+      <form
+        action={async (FormData) => {
+          await addUser(FormData, user?.id);
+          router.refresh();
+        }}
+      >
+        <input type="text" name="name" />
+        <input type="text" name="lastname" />
+        <button type="submit">Update User Name</button>
+      </form>
     </Dialog>
   );
 };

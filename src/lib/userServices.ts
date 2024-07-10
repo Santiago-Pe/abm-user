@@ -11,7 +11,8 @@ export const getUsers = async (limit: number, page: number) => {
   return await response.json();
 };
 export const createUser = async (userData: Partial<User>) => {
-  const response = await fetch(`${API_URL}/users`, {
+   let url = `${API_URL}?sector=${SECTOR}`
+  const response = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -26,7 +27,8 @@ export const createUser = async (userData: Partial<User>) => {
   return await response.json();
 };
 export const updateUser = async (userId: number, userData: Partial<User>) => {
-  const response = await fetch(`${API_URL}/users/${userId}`, {
+  let url = `${API_URL}/${userId}?sector=${SECTOR}`
+  const response = await fetch(url, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -34,7 +36,7 @@ export const updateUser = async (userId: number, userData: Partial<User>) => {
     body: JSON.stringify(userData),
   });
 
-  console.log(response)
+
   
   if (!response.ok) {
     throw new Error('Failed to update user');

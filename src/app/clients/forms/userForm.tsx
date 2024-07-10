@@ -5,8 +5,7 @@ import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
-import { useFormState, useFormStatus } from "react-dom";
-import { addUser, putUser } from "@/app/api/actions/users";
+import { postUser, putUser } from "@/app/api/actions/users";
 import { useRouter } from "next/navigation";
 
 interface UserFormProps {
@@ -23,18 +22,19 @@ const UserForm: React.FC<UserFormProps> = ({
   onSave,
 }) => {
   const router = useRouter();
-  const { data } = useFormStatus();
 
-  // const addUserFunc = addUser.bind(data, user?.id);
+  const featchUser = async (FormData: any) => {
+    let response;
+    user?.id
+      ? (response = await putUser(user?.id, FormData.formData))
+      : (response = await postUser(FormData.formData));
+    router.refresh();
+    return response;
+  };
 
   return (
     <Dialog header="Edit User" visible={visible} onHide={onHide}>
-      <form
-        action={async (FormData) => {
-          await putUser(FormData, user?.id);
-          router.refresh();
-        }}
-      >
+      <form action={featchUser}>
         <input type="text" name="usuario" />
         <input type="text" name="sector" value={user?.sector} />
         <input type="text" name="estado" value={user?.estado} />

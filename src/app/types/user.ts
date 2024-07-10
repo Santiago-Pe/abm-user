@@ -1,5 +1,5 @@
 export interface User {
-  id: number;
+  id: number | undefined;
   usuario: string;
   estado: string;
   sector: string;

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, ChangeEvent, useCallback } from "react";
+import React, { useState, ChangeEvent, useCallback, useRef } from "react";
 import style from "./userList.module.css";
 import { User } from "@/app/types/user";
 import { FilterMatchMode } from "primereact/api";
@@ -10,7 +10,8 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { UserForm } from "../../forms";
 import { Paginator, PaginatorPageChangeEvent } from "primereact/paginator";
-import Header from "@/app/server/components/header/header";
+import { UserDeleteForm } from "../../modals";
+import useFetchUsers from "../../hooks/useFetchUsers";
 
 interface UserListProps {
   initialData: User[];
@@ -22,11 +23,12 @@ const UserList: React.FC<UserListProps> = ({
   totalRecords,
 }) => {
   // States
-  const [users, setUsers] = useState<User[]>(initialData);
+  const { users, loading, error, fetchUsers } = useFetchUsers(initialData);
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
   const [statusFilterValue, setStatusFilterValue] = useState<string | null>(
     null
   );
+
   const [filters, setFilters] = useState({
     global: {
       value: null as string | null,
@@ -37,6 +39,7 @@ const UserList: React.FC<UserListProps> = ({
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [first, setFirst] = useState(1);
   const [rows, setRows] = useState(5);
+  const ref = useRef("");
 
   // Data
   const statusOptions = ["ACTIVO", "INACTIVO"];
@@ -45,16 +48,9 @@ const UserList: React.FC<UserListProps> = ({
     { field: "usuario", header: "Usuario" },
     { field: "estado", header: "Estado" },
     { field: "sector", header: "Sector" },
+    { field: undefined, header: "Accion" },
   ];
 
-  // Functions
-  const loadUsers = async (page: number) => {
-    const response = await fetch(
-      `https://staging.duxsoftware.com.ar/api/personal?sector=2222&_limit=${rows}&_page=${page}`
-    );
-    const data = await response.json();
-    setUsers(data);
-  };
   const renderHeader = () => {
     return (
       <div className={style.containerHeader}>
@@ -75,11 +71,6 @@ const UserList: React.FC<UserListProps> = ({
             className={style.w100}
           />
         </div>
-        <Button
-          className={style.buttonSmall}
-          label="Re"
-          onClick={() => loadUsers(1)}
-        />
         <Button
           icon="pi pi-filter-fill"
           className={style.buttonSmall}
@@ -106,36 +97,58 @@ const UserList: React.FC<UserListProps> = ({
   const onPageChange = (e: PaginatorPageChangeEvent) => {
     setFirst(e.first);
     setRows(e.rows);
-    loadUsers(e.first / e.rows + 1);
+    fetchUsers(e.first / e.rows + 1);
   };
-  const openDialog = (user: User) => {
+  const openDialog = (user: User, dialog: string) => {
+    ref.current = dialog;
     setSelectedUser(user);
   };
   const nameTemplate = (rowData: User) => {
     return (
       <Button
         type="button"
-        onClick={() => openDialog(rowData)}
+        onClick={() => openDialog(rowData, "USER_FORM")}
         label={rowData.usuario}
         link
       />
     );
   };
+  const actionTemplate = (rowData: User) => {
+    return (
+      <Button
+        severity="danger"
+        onClick={() => openDialog(rowData, "USER_DELETE_FORM")}
+        icon={"pi pi-times-circle"}
+      />
+    );
+  };
+  const renderTemplate = (header: string | undefined) => {
+    switch (header) {
+      case "Usuario":
+        return nameTemplate;
+      case "Accion":
+        return actionTemplate;
+      default:
+        return undefined;
+    }
+  };
   const clearState = useCallback(() => {
     setSelectedUser(null);
   }, []);
-  const handleRefetch = async () => {
-    await loadUsers(first / rows + 1);
+
+  const refetch = () => {
+    fetchUsers(first / rows + 1);
   };
+
   const header = renderHeader();
 
   return (
     <>
       <DataTable
-        value={users}
+        value={users ?? []}
         header={header}
-        //loading={loading}
         size="normal"
+        loading={loading}
         filters={filters}
         globalFilterFields={["usuario", "estado"]}
         filterDisplay="menu"
@@ -144,10 +157,10 @@ const UserList: React.FC<UserListProps> = ({
         {columns.map((col, idx) => (
           <Column
             key={idx}
-            field={col.field}
-            header={col.header}
-            sortable
-            body={col.field === "usuario" ? nameTemplate : undefined}
+            field={col?.field}
+            header={col?.header}
+            sortable={typeof col?.field === "string"}
+            body={renderTemplate(col?.header)}
           />
         ))}
       </DataTable>
@@ -158,7 +171,19 @@ const UserList: React.FC<UserListProps> = ({
         onPageChange={onPageChange}
       />
 
-      <UserForm user={selectedUser} clearState={clearState} useButton={false} />
+      <UserForm
+        user={selectedUser}
+        clearState={clearState}
+        useButton={false}
+        isVisible={ref.current === "USER_FORM"}
+        refetch={refetch}
+      />
+      <UserDeleteForm
+        user={selectedUser}
+        clearState={clearState}
+        isVisible={ref.current === "USER_DELETE_FORM"}
+        refetch={refetch}
+      />
     </>
   );
 };

@@ -24,11 +24,9 @@ export const getUsers = async (limit?: number, page?: number, paginate: boolean 
     totalRecords,
   };
 };
-export const getUser = async (userId?: number | string): Promise<UsersResponse> => {
+export const getUser = async (userId: number | string): Promise<UsersResponse> => {
   let url = `${API_URL}/${userId}?sector=${SECTOR}`;
   
- 
-
   const response = await fetch(url, { cache: 'no-store' });
   
   if (!response.ok) {
@@ -50,7 +48,6 @@ export const createUser = async (userData: Partial<User>) => {
     body: JSON.stringify(userData),
   });
  
-  console.log('FROM SERVICES POST USER RESPONSE', response)
   if (!response.ok) {
     throw new Error('Failed to create user');
   }
@@ -68,10 +65,25 @@ export const updateUser = async (userId: number, userData: Partial<User>) => {
   });
 
 
-   console.log('FROM SERVICES PUT USER RESPONSE', response)
   if (!response.ok) {
     throw new Error('Failed to update user');
   }
 
+  return await response.json();
+};
+export const deleteUser = async (userId: number | string): Promise<void> => {
+  let url = `${API_URL}/${userId}?sector=${SECTOR}`;
+  
+  const response = await fetch(url, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  
+
+  if (!response.ok) {
+    throw new Error('Failed to delete user');
+  }
   return await response.json();
 };

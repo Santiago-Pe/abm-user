@@ -12,10 +12,7 @@ export default async function Home() {
   return (
     <div className="p-m-4">
       <Suspense fallback={<Loading />}>
-        <Header
-          title="Dashboard"
-          endComponent={<UserForm useButton={true} />}
-        />
+        <Header title="Usuarios" endComponent={<UserForm useButton={true} />} />
         <UserList initialData={paginatedUsers} totalRecords={totalRecords} />
       </Suspense>
     </div>

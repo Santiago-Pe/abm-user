@@ -1,9 +1,4 @@
 .sidebar {
-  /* position: fixed;
-  top: 0;
-  left: 0;
-  width: 50px;
-  */
   width: 50px;
   background-color: #343a40;
   display: flex;

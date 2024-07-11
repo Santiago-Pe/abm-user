@@ -7,15 +7,7 @@ body {
 table {
   width: 100%;
 }
-.navbarContainer {
-  color: #fff;
-}
-.w100 {
-  width: 100%;
-}
-.loaderContainer {
-  height: 100vh;
-}
+/* Layout */
 .layoutContent {
   width: 100%;
   padding: 20px;
@@ -24,6 +16,11 @@ table {
   display: flex;
   flex-direction: row;
 }
+/* Loadin Component */
+.loaderContainer {
+  height: 100vh;
+}
+
 .loaderWrapper {
   position: fixed;
   top: 0;
@@ -35,26 +32,6 @@ table {
   align-items: center;
   background: rgba(255, 255, 255, 0.8); /* Slightly transparent background */
   z-index: 9999;
-}
-.bg-primary {
-  background-color: #0863e7 !important;
-}
-.bg-gray {
-  background-color: #64748b;
-}
-.contanierIconInput {
-  position: relative;
-  display: inline-block;
-}
-.contanierIconInput input {
-  padding: 10px 40px;
-  width: 100%;
-  height: 100%;
-}
-.iconInput {
-  position: absolute;
-  top: 50%;
-  transform: translate(50%, -54%);
 }
 .opacity {
   background: rgba(0, 0, 0, 0.5); /* Darker transparent background */
@@ -75,4 +52,28 @@ table {
   100% {
     transform: rotate(360deg);
   }
+}
+
+/* Colors */
+.bg-primary {
+  background-color: #0863e7 !important;
+}
+.bg-gray {
+  background-color: #64748b;
+}
+
+/* Inputs Prime React */
+.contanierIconInput {
+  position: relative;
+  display: inline-block;
+}
+.contanierIconInput input {
+  padding: 10px 40px;
+  width: 100%;
+  height: 100%;
+}
+.iconInput {
+  position: absolute;
+  top: 50%;
+  transform: translate(50%, -54%);
 }

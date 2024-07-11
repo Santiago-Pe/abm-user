@@ -1,13 +1,7 @@
 "use client";
-import { User } from "@/app/types/user";
+import { User } from "../../../types";
 import { useState, useEffect, useCallback } from "react";
-
-interface UseFetchUsersResult {
-  users: User[] | null;
-  loading: boolean;
-  error: string | null;
-  fetchUsers: (page: number) => Promise<void>;
-}
+import UseFetchUsersResult from "./useFetchUsers.types";
 
 const useFetchUsers = (
   initialData: User[] = [],

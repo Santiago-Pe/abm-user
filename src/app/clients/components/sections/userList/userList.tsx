@@ -8,15 +8,11 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { UserForm } from "../../forms";
 import { Paginator, PaginatorPageChangeEvent } from "primereact/paginator";
+import { UserListProps } from "./userList.types";
 import { UserDeleteForm } from "../../modals";
-import useFetchUsers from "../../hooks/useFetchUsers";
-
-interface UserListProps {
-  initialData: User[];
-  totalRecords: number;
-}
+import { UserForm } from "../../forms";
+import { useFetchUsers } from "@/app/clients/hooks";
 
 const UserList: React.FC<UserListProps> = ({
   initialData = [],

@@ -1,5 +1,4 @@
 import React from "react";
-import { ProgressSpinner } from "primereact/progressspinner";
 
 interface FullScreenLoaderProps {
   useOpacity?: boolean;

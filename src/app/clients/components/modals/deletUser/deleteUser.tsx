@@ -1,18 +1,11 @@
 "use client";
 import React, { useRef, useCallback } from "react";
-import { User } from "@/app/types/user";
 import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
 import { removeUser } from "@/app/api/actions/userActions";
 import { Toast } from "primereact/toast";
-import { SubmitButton } from "../../forms/submitButton";
-
-interface UserDeleteFormProps {
-  user: User | null;
-  clearState: () => void;
-  isVisible: boolean;
-  refetch?: () => void;
-}
+import { UserDeleteFormProps } from "./deleteUsers.types";
+import { SubmitButton } from "../../forms";
 
 const UserDeleteForm: React.FC<UserDeleteFormProps> = ({
   user,

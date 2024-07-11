@@ -1,5 +1,6 @@
 'use server'
 
+// Server actions to create, update and delete users from server
 import { User } from "@/app/types/user"
 import { createUser, deleteUser, updateUser } from "@/lib/userServices"
 

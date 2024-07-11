@@ -5,14 +5,14 @@ import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
-import { useFormFields } from "../hooks/useForm";
 import { useRouter } from "next/navigation";
 import { postUser, putUser } from "@/app/api/actions/userActions";
 import { ErrorMessage } from "@/app/server/components";
-import { useFormStatus } from "react-dom";
 import { Toast } from "primereact/toast";
 import { z } from "zod";
-import { SubmitButton } from "./submitButton";
+import { useFormFields } from "../../../hooks";
+import SubmitButton from "../submitButton/submitButton";
+
 interface UserFormProps {
   user?: User | null;
   clearState?: () => void;
@@ -47,6 +47,7 @@ const UserForm: React.FC<UserFormProps> = ({
   refetch = null,
 }) => {
   const router = useRouter();
+  const toast = useRef(null);
 
   // Custom Hook and States
   const [isDialogVisible, setIsDialogVisible] = useState(false);
@@ -61,26 +62,7 @@ const UserForm: React.FC<UserFormProps> = ({
     estado: null,
     sector: null,
   });
-  const [loading, setLoading] = useState(false);
 
-  const toast = useRef(null);
-
-  const showCreateSuccess = () => {
-    toast.current?.show({
-      severity: "success",
-      summary: "Success",
-      detail: "Se creo con exito el usuario",
-      life: 3000,
-    });
-  };
-  const showEditSuccess = () => {
-    toast?.current?.show({
-      severity: "success",
-      summary: "Success",
-      detail: "Se edito con exito el usuairo",
-      life: 3000,
-    });
-  };
   // Data
   const statusOptions = ["ACTIVO", "INACTIVO"];
   // Functions
@@ -147,6 +129,24 @@ const UserForm: React.FC<UserFormProps> = ({
 
     return { succes: true };
   };
+
+  // Functions
+  const showCreateSuccess = () => {
+    toast.current?.show({
+      severity: "success",
+      summary: "Success",
+      detail: "Se creo con exito el usuario",
+      life: 3000,
+    });
+  };
+  const showEditSuccess = () => {
+    toast?.current?.show({
+      severity: "success",
+      summary: "Success",
+      detail: "Se edito con exito el usuairo",
+      life: 3000,
+    });
+  };
   const isUserVisible = (user: User | null, isVisible: boolean): boolean => {
     return user !== null && isVisible;
   };
@@ -160,15 +160,9 @@ const UserForm: React.FC<UserFormProps> = ({
   const callback = () => {
     refetch ? refetch() : router.refresh();
   };
-  const header = () => {
-    return (
-      <div className="bg-primary" style={{ width: "" }}>
-        Usuario
-      </div>
-    );
-  };
-  // In your component:
+
   const visible = shouldShowDialog(user, isVisible, isDialogVisible);
+
   useEffect(() => {
     if (user !== null && isVisible) {
       setIsDialogVisible(true);
@@ -193,9 +187,8 @@ const UserForm: React.FC<UserFormProps> = ({
         />
       )}
       <Toast ref={toast} onRemove={callback} />
-      <Dialog header="Edit User" visible={visible} onHide={handleDialog}>
+      <Dialog header={"Usuario"} visible={visible} onHide={handleDialog}>
         <form action={featchUser}>
-          {/* <form action={featchUser}> */}
           <div className="p-field">
             <label htmlFor="usuario">Usuario</label>
             <InputText
@@ -204,7 +197,6 @@ const UserForm: React.FC<UserFormProps> = ({
               value={fields.usuario}
               onChange={handleFieldChange}
               invalid={error.usuario !== null}
-              //disabled={pending}
             />
             {error.usuario != null && <ErrorMessage text={error.usuario} />}
           </div>
@@ -223,7 +215,6 @@ const UserForm: React.FC<UserFormProps> = ({
               }
               placeholder="Select status"
               invalid={error.estado !== null}
-              //disabled={pending}
             />
             {error.estado != null && <ErrorMessage text={error.estado} />}
           </div>
@@ -235,7 +226,6 @@ const UserForm: React.FC<UserFormProps> = ({
               value={fields.sector}
               onChange={handleFieldChange}
               invalid={error.sector !== null}
-              //disabled={pending}
             />
             {error.sector != null && <ErrorMessage text={error.sector} />}
           </div>

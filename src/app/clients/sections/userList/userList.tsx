@@ -131,7 +131,6 @@ const UserList: React.FC<UserListProps> = ({
 
   return (
     <>
-      <Header title="Dashboard" endComponent={<UserForm useButton={true} />} />
       <DataTable
         value={users}
         header={header}
@@ -159,12 +158,7 @@ const UserList: React.FC<UserListProps> = ({
         onPageChange={onPageChange}
       />
 
-      <UserForm
-        user={selectedUser}
-        clearState={clearState}
-        useButton={false}
-        callback={handleRefetch}
-      />
+      <UserForm user={selectedUser} clearState={clearState} useButton={false} />
     </>
   );
 };

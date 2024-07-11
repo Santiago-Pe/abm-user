@@ -1,5 +1,5 @@
 "use client";
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { User } from "@/app/types/user";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
@@ -8,11 +8,11 @@ import { Button } from "primereact/button";
 import { useFormFields } from "../hooks/useForm";
 import { useRouter } from "next/navigation";
 import { postUser, putUser } from "@/app/api/actions/userActions";
+import { ErrorMessage } from "@/app/server/components";
 
 interface UserFormProps {
   user?: User | null;
   clearState?: () => void;
-  callback?: () => void;
   useButton: boolean;
 }
 
@@ -20,9 +20,9 @@ const UserForm: React.FC<UserFormProps> = ({
   user = null,
   clearState = null,
   useButton = false,
-  callback = null,
 }) => {
   const router = useRouter();
+
   // Custom Hook and States
   const [isDialogVisible, setIsDialogVisible] = useState(false);
   const [fields, handleFieldChange, setValues] = useFormFields({
@@ -31,80 +31,17 @@ const UserForm: React.FC<UserFormProps> = ({
     estado: user?.estado || "",
     sector: user?.sector || "",
   });
+  const [error, setError] = useState<ValidationErrors>({
+    usuario: null,
+    estado: null,
+    sector: null,
+  });
 
   // Data
   const statusOptions = ["ACTIVO", "INACTIVO"];
+  const errorMessage = "This input is required";
 
-  // const getUser = async (page: number) => {
-  //   const response = await fetch(
-  //     `https://staging.duxsoftware.com.ar/api/personal?sector=2222&_limit=${5}&_page=${page}`
-  //   );
-  //   const data = await response.json();
-  // };
-  // const postUser = async (fields: any) => {
-  //   try {
-  //     const response = await fetch(
-  //       `https://staging.duxsoftware.com.ar/api/personal?sector=2222`,
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify(fields),
-  //       }
-  //     );
-
-  //     if (!response.ok) {
-  //       throw new Error("Failed to post user");
-  //     }
-
-  //     const data = await response.json();
-
-  //     handleDialog();
-
-  //     return data;
-  //   } catch (error) {
-  //     console.error("Error posting user:", error);
-  //     throw error;
-  //   }
-  // };
-  // const putUser = async (fields: any) => {
-  //   try {
-  //     const response = await fetch(
-  //       `https://staging.duxsoftware.com.ar/api/personal/${fields.id}?sector=2222`,
-  //       {
-  //         method: "PUT",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify(fields),
-  //       }
-  //     );
-
-  //     if (!response.ok) {
-  //       throw new Error("Failed to post user");
-  //     }
-
-  //     const data = await response.json();
-  //     handleDialog();
-
-  //     return data;
-  //   } catch (error) {
-  //     console.error("Error posting user:", error);
-  //     throw error;
-  //   }
-  // };
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>): void => {
-    e.preventDefault();
-    // build boyd
-    if (user) {
-      await putUser(fields);
-      callback?.();
-    } else {
-      await postUser(fields);
-      await getUser(10);
-    }
-  };
+  // FUnctions
   const handleDialog = () => {
     let emptyObject = {
       id: "",
@@ -117,24 +54,45 @@ const UserForm: React.FC<UserFormProps> = ({
     clearState?.();
     setValues(emptyObject);
   };
+  const validate = (fields: Record<string, any>): boolean => {
+    const newErrors: ValidationErrors = {
+      usuario: null,
+      estado: null,
+      sector: null,
+    };
+
+    if (!fields.usuario) {
+      newErrors.usuario = "Usuario is required";
+    }
+    if (!fields.estado) {
+      newErrors.estado = "Estado is required";
+    }
+    if (!fields.sector) {
+      newErrors.sector = "Sector is required";
+    }
+
+    setError(newErrors);
+    return !newErrors.usuario && !newErrors.estado && !newErrors.sector;
+  };
 
   // Server actions
-  const featchUser = async (FormData: any) => {
-    let response;
-    // if (user?.id) {
-    //   console.log("edicion");
-    //   response = await putUser(user?.id, fields);
-    // } else {
-    //   console.log("creacion");
-    //   response = await postUser(fields);
-    // }
-    user?.id
-      ? (response = await putUser(user?.id, fields))
-      : (response = await postUser(fields));
-    handleDialog();
-    router.refresh();
+  const featchUser = async () => {
+    let isError = validate(fields);
+    console.log("FROM VALIDATE", isError);
+    if (isError) {
+      console.log("FROM IF", isError);
+      return;
+    } else {
+      let response;
 
-    return response;
+      user?.id
+        ? (response = await putUser(user?.id, fields))
+        : (response = await postUser(fields));
+      handleDialog();
+      router.refresh();
+
+      return response;
+    }
   };
 
   useEffect(() => {
@@ -149,8 +107,6 @@ const UserForm: React.FC<UserFormProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
-
-  console.log("render");
 
   return (
     <>
@@ -176,7 +132,9 @@ const UserForm: React.FC<UserFormProps> = ({
               name="usuario"
               value={fields.usuario}
               onChange={handleFieldChange}
+              invalid={error.usuario !== null}
             />
+            {error.usuario != null && <ErrorMessage text={error.usuario} />}
           </div>
           <div className="p-field">
             <label htmlFor="estado">Estado</label>
@@ -192,7 +150,9 @@ const UserForm: React.FC<UserFormProps> = ({
                 handleFieldChange({ target: { id: "estado", value: e.value } })
               }
               placeholder="Select status"
+              invalid={error.estado !== null}
             />
+            {error.estado != null && <ErrorMessage text={error.estado} />}
           </div>
           <div className="p-field">
             <label htmlFor="sector">Sector</label>
@@ -201,7 +161,9 @@ const UserForm: React.FC<UserFormProps> = ({
               name="sector"
               value={fields.sector}
               onChange={handleFieldChange}
+              invalid={error.sector !== null}
             />
+            {error.sector != null && <ErrorMessage text={error.sector} />}
           </div>
           <Button type="submit" label="Save" className="p-button-success" />
         </form>

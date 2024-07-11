@@ -8,12 +8,14 @@ import { UserForm } from "./clients/forms";
 export default async function Home() {
   const rows = 5;
   const { users: paginatedUsers, totalRecords } = await getUsers(rows, 1, true);
-  const user = await getUser("vEjXymU");
-  console.log(user);
-  console.log(totalRecords);
+  // const user = await getUser("vEjXymU");
   return (
     <div className="p-m-4">
       <Suspense fallback={<Loading />}>
+        <Header
+          title="Dashboard"
+          endComponent={<UserForm useButton={true} />}
+        />
         <UserList initialData={paginatedUsers} totalRecords={totalRecords} />
       </Suspense>
     </div>

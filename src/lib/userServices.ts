@@ -1,10 +1,10 @@
-import { User } from "@/app/types/user";
+import { User, UsersResponse } from "@/app/types/user";
 
 const API_URL = process.env.API_URL;
 const SECTOR = process.env.SECTOR;
 
 
-export const getUsers = async (limit?: number, page?: number, paginate: boolean = true): Promise<UserResponse> => {
+export const getUsers = async (limit?: number, page?: number, paginate: boolean = true): Promise<UsersResponse> => {
   let url = `${API_URL}?sector=${SECTOR}`;
   
   if (paginate && limit !== undefined && page !== undefined) {
@@ -16,8 +16,7 @@ export const getUsers = async (limit?: number, page?: number, paginate: boolean 
   if (!response.ok) {
     throw new Error('Failed to fetch users');
   }
-
-  const totalRecords = parseInt(response.headers.get('X-Total-Count'));
+  const totalRecords = parseInt(response.headers.get('X-Total-Count') ?? '0', 10);
   const users = await response.json();
 
   return {
@@ -25,9 +24,7 @@ export const getUsers = async (limit?: number, page?: number, paginate: boolean 
     totalRecords,
   };
 };
-
-
-export const getUser = async (userId?: number | string): Promise<UserResponse> => {
+export const getUser = async (userId?: number | string): Promise<UsersResponse> => {
   let url = `${API_URL}/${userId}?sector=${SECTOR}`;
   
  
@@ -38,16 +35,10 @@ export const getUser = async (userId?: number | string): Promise<UserResponse> =
     throw new Error('Failed to fetch users');
   }
 
-  const totalRecords = parseInt(response.headers.get('X-Total-Count'));
   const users = await response.json();
 
-  return {
-    users,
-    totalRecords,
-  };
+  return users
 };
-
-
 export const createUser = async (userData: Partial<User>) => {
 
   let url = `${API_URL}?sector=${SECTOR}`

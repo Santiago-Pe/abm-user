@@ -1,36 +1,20 @@
-import { Skeleton } from "primereact/skeleton";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
+import React from "react";
+import { ProgressSpinner } from "primereact/progressspinner";
 
-export default function Loading() {
-  const items: number[] = Array.from({ length: 5 }, (v, i) => i);
-
-  return (
-    <DataTable value={items} className="w100">
-      <Column
-        field="code"
-        header="Code"
-        style={{ width: "25%" }}
-        body={<Skeleton />}
-      ></Column>
-      <Column
-        field="name"
-        header="Name"
-        style={{ width: "25%" }}
-        body={<Skeleton />}
-      ></Column>
-      <Column
-        field="category"
-        header="Category"
-        style={{ width: "25%" }}
-        body={<Skeleton />}
-      ></Column>
-      <Column
-        field="quantity"
-        header="Quantity"
-        style={{ width: "25%" }}
-        body={<Skeleton />}
-      ></Column>
-    </DataTable>
-  );
+interface FullScreenLoaderProps {
+  useOpacity?: boolean;
 }
+
+const FullScreenLoader: React.FC<FullScreenLoaderProps> = ({
+  useOpacity = false,
+}) => {
+  return (
+    <div className={`loaderContainer`}>
+      <div className={`loaderWrapper ${useOpacity ? "opacity" : ""}`}>
+        <div className="spinner"></div>
+      </div>
+    </div>
+  );
+};
+
+export default FullScreenLoader;

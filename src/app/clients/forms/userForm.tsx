@@ -160,6 +160,13 @@ const UserForm: React.FC<UserFormProps> = ({
   const callback = () => {
     refetch ? refetch() : router.refresh();
   };
+  const header = () => {
+    return (
+      <div className="bg-primary" style={{ width: "" }}>
+        Usuario
+      </div>
+    );
+  };
   // In your component:
   const visible = shouldShowDialog(user, isVisible, isDialogVisible);
   useEffect(() => {
@@ -181,7 +188,7 @@ const UserForm: React.FC<UserFormProps> = ({
         <Button
           type="button"
           label="Create user"
-          className="p-button-success"
+          className="bg-primary"
           onClick={handleDialog}
         />
       )}

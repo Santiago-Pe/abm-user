@@ -1,11 +1,12 @@
-import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
-import "primereact/resources/themes/lara-light-cyan/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primereact/resources/themes/lara-light-blue/theme.css";
 import "./globals.css";
 import { PrimeReactProvider } from "primereact/api";
-import Loading from "./loading";
-import React, { Suspense } from "react";
+import React from "react";
 import { Menubar } from "primereact/menubar";
+import Sidebar from "./server/components/sidebar/sidebar";
+import Navbar from "./server/components/navbar/navbar";
 
 export default function RootLayout({
   children,
@@ -29,9 +30,12 @@ export default function RootLayout({
     <html lang="en">
       <PrimeReactProvider>
         <body>
-          <Menubar model={items} />
-          <section>
-            <Suspense fallback={<Loading />}>{children}</Suspense>
+          <header>
+            <Navbar />
+          </header>
+          <section className="layoutContainer">
+            <Sidebar />
+            <div className="layoutContent">{children}</div>
           </section>
         </body>
       </PrimeReactProvider>

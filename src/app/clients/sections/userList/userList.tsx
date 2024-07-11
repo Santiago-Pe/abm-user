@@ -62,8 +62,8 @@ const UserList: React.FC<UserListProps> = ({
           className={style.w100}
           showClear
         />
-        <div className="p-input-icon-left" style={{ width: "100%" }}>
-          <i className="pi pi-search" />
+        <div className="contanierIconInput" style={{ width: "100%" }}>
+          <i className="pi pi-search iconInput" />
           <InputText
             value={globalFilterValue}
             onChange={onGlobalFilterChange}
@@ -73,10 +73,14 @@ const UserList: React.FC<UserListProps> = ({
         </div>
         <Button
           icon="pi pi-filter-fill"
-          className={style.buttonSmall}
+          className={`${style.buttonSmall} bg-gray `}
           disabled
         />
-        <Button icon="pi pi-sliders-v" className={style.buttonSmall} disabled />
+        <Button
+          icon="pi pi-sliders-v"
+          className={`${style.buttonSmall} bg-gray `}
+          disabled
+        />
       </div>
     );
   };
@@ -148,7 +152,7 @@ const UserList: React.FC<UserListProps> = ({
         value={users ?? []}
         header={header}
         size="normal"
-        loading={loading}
+        //loading={loading}
         filters={filters}
         globalFilterFields={["usuario", "estado"]}
         filterDisplay="menu"

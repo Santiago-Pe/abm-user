@@ -114,6 +114,7 @@ const UserForm: React.FC<UserFormProps> = ({
 
   // Functions
   const showCreateSuccess = () => {
+    // @ts-ignore
     toast.current?.show({
       severity: "success",
       summary: "Success",
@@ -122,6 +123,7 @@ const UserForm: React.FC<UserFormProps> = ({
     });
   };
   const showEditSuccess = () => {
+    // @ts-ignore
     toast?.current?.show({
       severity: "success",
       summary: "Success",

@@ -1,6 +1,7 @@
 # Estructura de proyecto
 
-```my-react-app/
+```
+my-react-app/
 ├── .next/
 ├── node_modules/
 ├── public/
@@ -69,6 +70,4 @@
 ├── next.config.json
 ├── README.md
 ├── next-env.d.ts
-
-
 ```

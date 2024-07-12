@@ -27,7 +27,8 @@ const useFetchUsers = (
       const data = await response.json();
       setUsers(data);
     } catch (err) {
-      setError(err.message);
+      // @ts-ignore
+      setError(err?.message);
     } finally {
       setLoading(false);
     }

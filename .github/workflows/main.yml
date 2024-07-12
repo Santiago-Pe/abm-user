@@ -18,14 +18,20 @@ jobs:
         id: timestamp
         run: echo "::set-output name=timestamp::$(date +%s)"
 
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Next.js app
+        run: npm run build
+
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag santiagope97/abm-user:${{ steps.timestamp.outputs.timestamp }}
+        run: docker build . --file Dockerfile --tag ${{ secrets.DOCKERHUB_USERNAME }}/abm-user:${{ steps.timestamp.outputs.timestamp }}
 
       - name: Log in to Docker Hub
-        run: echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+        run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
       - name: Tag Docker image
-        run: docker tag santiagope97/abm-user:${{ steps.timestamp.outputs.timestamp }} ${{ secrets.DOCKERHUB_USERNAME }}/abm-user:latest
+        run: docker tag ${{ secrets.DOCKERHUB_USERNAME }}/abm-user:${{ steps.timestamp.outputs.timestamp }} ${{ secrets.DOCKERHUB_USERNAME }}/abm-user:latest
 
       - name: Push Docker image to Docker Hub
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/abm-user:latest

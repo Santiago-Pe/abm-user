@@ -1,11 +1,7 @@
 // src/components/atoms/Header/Header.tsx
-import React, { ReactNode } from "react";
+import React from "react";
 import styles from "./header.module.css";
-
-interface HeaderProps {
-  title: string;
-  endComponent?: ReactNode;
-}
+import { HeaderProps } from "./header.types";
 
 const Header: React.FC<HeaderProps> = ({ title, endComponent }) => {
   return (

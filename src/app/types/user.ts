@@ -4,3 +4,7 @@ export interface User {
   estado: string;
   sector: string;
 }
+export type UsersResponse = {
+  users: User[];
+  totalRecords: number;
+};

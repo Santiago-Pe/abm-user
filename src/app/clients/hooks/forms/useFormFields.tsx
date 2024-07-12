@@ -1,10 +1,7 @@
 import { useState, ChangeEvent } from "react";
+import { FieldsType } from "./useForm.types";
 
-interface FieldsType {
-  [key: string | symbol]: string;
-}
-
-export function useFormFields(
+function useFormFields(
   initialState: FieldsType
 ): [
   FieldsType,
@@ -35,3 +32,5 @@ export function useFormFields(
     setValues,
   ];
 }
+
+export default useFormFields;

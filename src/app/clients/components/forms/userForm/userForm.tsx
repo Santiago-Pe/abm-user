@@ -65,24 +65,6 @@ const UserForm: React.FC<UserFormProps> = ({
 
   // Data
   const statusOptions = ["ACTIVO", "INACTIVO"];
-  // Functions
-  const handleDialog = () => {
-    let emptyObject = {
-      id: "",
-      usuario: "",
-      estado: "",
-      sector: "",
-    };
-
-    setIsDialogVisible((prevState) => !prevState);
-    setValues(emptyObject);
-    setError({
-      usuario: null,
-      estado: null,
-      sector: null,
-    });
-    clearState?.();
-  };
 
   // Server actions
   const featchUser = async () => {
@@ -160,6 +142,23 @@ const UserForm: React.FC<UserFormProps> = ({
   const callback = () => {
     refetch ? refetch() : router.refresh();
   };
+  const handleDialog = () => {
+    let emptyObject = {
+      id: "",
+      usuario: "",
+      estado: "",
+      sector: "",
+    };
+
+    setIsDialogVisible((prevState) => !prevState);
+    setValues(emptyObject);
+    setError({
+      usuario: null,
+      estado: null,
+      sector: null,
+    });
+    clearState?.();
+  };
 
   const visible = shouldShowDialog(user, isVisible, isDialogVisible);
 
@@ -187,9 +186,14 @@ const UserForm: React.FC<UserFormProps> = ({
         />
       )}
       <Toast ref={toast} onRemove={callback} />
-      <Dialog header={"Usuario"} visible={visible} onHide={handleDialog}>
+      <Dialog
+        header={"Usuario"}
+        visible={visible}
+        onHide={handleDialog}
+        style={{ width: "50rem" }}
+      >
         <form action={featchUser}>
-          <div className="p-field">
+          <div className="containerInput">
             <label htmlFor="usuario">Usuario</label>
             <InputText
               id="usuario"
@@ -200,7 +204,7 @@ const UserForm: React.FC<UserFormProps> = ({
             />
             {error.usuario != null && <ErrorMessage text={error.usuario} />}
           </div>
-          <div className="p-field">
+          <div className="containerInput">
             <label htmlFor="estado">Estado</label>
             <Dropdown
               id="estado"
@@ -218,7 +222,7 @@ const UserForm: React.FC<UserFormProps> = ({
             />
             {error.estado != null && <ErrorMessage text={error.estado} />}
           </div>
-          <div className="p-field">
+          <div className="containerInput">
             <label htmlFor="sector">Sector</label>
             <InputText
               id="sector"
@@ -229,7 +233,10 @@ const UserForm: React.FC<UserFormProps> = ({
             />
             {error.sector != null && <ErrorMessage text={error.sector} />}
           </div>
-          <SubmitButton label="Guardar" />
+          <div className="containerButton mt-3">
+            <SubmitButton label="Confirmar" icon="pi pi-check" />
+            <Button label="Salir" outlined icon="pi pi-times" />
+          </div>
         </form>
       </Dialog>
     </>

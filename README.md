@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Documentación del Proyecto
 
-## Getting Started
+## Descripción General
 
-First, run the development server:
+Este proyecto es una aplicación web desarrollada utilizando **Next.js**, **React**, **TypeScript** y **PrimeReact**. La aplicación incluye funcionalidades para la gestión de usuarios (ABM - Alta, Baja, Modificación), permitiendo crear, editar, eliminar y actualizar la lista de usuarios.
+
+## Instalación y Configuración
+
+### Requisitos Previos
+
+Asegúrate de tener instalado Node.js en tu máquina. Puedes descargarlo desde [Node.js](https://nodejs.org/).
+
+### Clonar el Repositorio
+
+Clona el repositorio del proyecto a tu máquina local utilizando el siguiente comando:
+
+```bash
+git clone <URL_DEL_REPOSITORIO>
+```
+
+### Clonar el Repositorio
+
+Navega al directorio del proyecto e instala las dependencias necesarias utilizando npm o yarn:
+
+```bash
+cd client
+npm install
+# o
+yarn install
+
+```
+
+### Scripts Disponibles
+
+En el archivo package.json se definen varios scripts para facilitar el desarrollo y despliegue de la aplicación:
+
+- dev: Inicia el servidor de desarrollo.
+- build: Compila la aplicación para producción.
+- start: Inicia el servidor de producción.
+- lint: Ejecuta el linter para verificar el código.
+
+Puedes ejecutar estos scripts utilizando npm o yarn. Por ejemplo:
 
 ```bash
 npm run dev
-# or
+# o
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Instalación y Configuración
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+La aplicación permite realizar las siguientes operaciones sobre usuarios:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+#### Crear Usuario
 
-## Learn More
+Para crear un nuevo usuario, navega a la sección de gestión de usuarios y haz clic en el botón "Crear Usuario". Rellena el formulario con la información del usuario y haz clic en "Guardar".
 
-To learn more about Next.js, take a look at the following resources:
+#### Editar Usuario
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Para editar un usuario existente, navega a la lista de usuarios, selecciona el usuario que deseas editar y haz clic en el botón "Editar". Modifica la información en el formulario y haz clic en "Guardar".
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+#### Eliminar Usuario
 
-## Deploy on Vercel
+Para eliminar un usuario, navega a la lista de usuarios, selecciona el usuario que deseas eliminar y haz clic en el botón "Eliminar". Confirma la eliminación en el cuadro de diálogo que aparece.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+#### Listar Usuarios
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+La lista de usuarios se puede ver en la sección de gestión de usuarios. Aquí podrás ver una tabla con todos los usuarios registrados, junto con opciones para editar o eliminar cada usuario.
+
+## Dependencias
+
+### Producción
+
+- next: Framework de React para la creación de aplicaciones web.
+- primeicons: Iconos utilizados por PrimeReact.
+- primereact: Biblioteca de componentes de interfaz de usuario.
+- react: Biblioteca de JavaScript para construir interfaces de usuario.
+- react-dom: Complemento para trabajar con el DOM en aplicaciones React.
+- zod: Biblioteca para validaciones y esquemas.
+
+### Desarrollo
+
+- @types/node: Tipos de TypeScript para Node.js.
+- @types/react: Tipos de TypeScript para React.
+- @types/react-dom: Tipos de TypeScript para React DOM.
+- eslint: Herramienta para identificar y reportar patrones en ECMAScript/JavaScript.
+- eslint-config-next: Configuración de ESLint específica para Next.js.
+- typescript: Lenguaje de programación que es un superconjunto de JavaScript.

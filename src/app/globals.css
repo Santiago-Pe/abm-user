@@ -7,6 +7,7 @@ body {
 table {
   width: 100%;
 }
+
 /* Layout */
 .layoutContent {
   width: 100%;
@@ -16,11 +17,11 @@ table {
   display: flex;
   flex-direction: row;
 }
+
 /* Loadin Component */
 .loaderContainer {
   height: 100vh;
 }
-
 .loaderWrapper {
   position: fixed;
   top: 0;
@@ -44,7 +45,6 @@ table {
   height: 80px;
   animation: spin 2s linear infinite;
 }
-
 @keyframes spin {
   0% {
     transform: rotate(0deg);
@@ -62,7 +62,22 @@ table {
   background-color: #64748b;
 }
 
+/* Utils && Spacing*/
+.capitalize-text {
+  text-transform: capitalize;
+}
+.mt-3 {
+  margin-top: 40px;
+}
+
 /* Inputs Prime React */
+.containerInput {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: stretch;
+  margin-top: 20px;
+}
 .contanierIconInput {
   position: relative;
   display: inline-block;
@@ -76,4 +91,10 @@ table {
   position: absolute;
   top: 50%;
   transform: translate(50%, -54%);
+}
+.containerButton {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  justify-content: center;
 }

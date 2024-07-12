@@ -3,7 +3,7 @@
 import { Button } from "primereact/button";
 import { useFormStatus } from "react-dom";
 
-function SubmitButton({ label }: SubmitButtonProps) {
+function SubmitButton({ label, icon }: SubmitButtonProps) {
   const { pending } = useFormStatus();
   return (
     <Button
@@ -11,6 +11,7 @@ function SubmitButton({ label }: SubmitButtonProps) {
       label={label}
       className="bg-primary"
       disabled={pending}
+      icon={icon}
     />
   );
 }

@@ -46,21 +46,32 @@ const UserDeleteForm: React.FC<UserDeleteFormProps> = ({
   const callback = () => {
     refetch?.();
   };
+  const header = () => {
+    return (
+      <>
+        <div>
+          Eliminar usuario:{" "}
+          <span className="capitalize-text">
+            {user?.usuario.toLocaleLowerCase()}
+          </span>
+        </div>
+      </>
+    );
+  };
   return (
     <>
       <Toast ref={toast} onHide={callback} />
       <Dialog
-        header={`Eliminar Usuario: ${user?.usuario}`}
+        header={header}
         visible={isVisible && user !== null}
         onHide={handleCancel}
+        style={{ width: "30rem" }}
         footer={
           <form action={handleDeleteUser}>
-            <Button
-              label="No"
-              className="p-button-text"
-              onClick={handleCancel}
-            />
-            <SubmitButton label="Si" />
+            <div className="containerButton">
+              <SubmitButton label="Si" icon="pi pi-check" />
+              <Button label="No" outlined icon="pi pi-times" />
+            </div>
           </form>
         }
       >

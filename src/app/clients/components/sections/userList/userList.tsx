@@ -10,9 +10,9 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Paginator, PaginatorPageChangeEvent } from "primereact/paginator";
 import { UserListProps } from "./userList.types";
-import { UserDeleteForm } from "../../modals";
 import { UserForm } from "../../forms";
 import { useFetchUsers } from "@/app/clients/hooks";
+import { UserDeleteForm } from "../../modals";
 
 const UserList: React.FC<UserListProps> = ({
   initialData = [],
@@ -56,6 +56,7 @@ const UserList: React.FC<UserListProps> = ({
           onChange={onStatusFilterChange}
           placeholder="Seleccionar estado"
           className={style.w100}
+          style={{ borderRadius: "8px" }}
           showClear
         />
         <div className="contanierIconInput" style={{ width: "100%" }}>

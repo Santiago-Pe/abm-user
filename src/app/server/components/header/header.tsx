@@ -1,5 +1,5 @@
 // src/components/atoms/Header/Header.tsx
-import React, { ReactNode } from "react";
+import React from "react";
 import styles from "./header.module.css";
 import { HeaderProps } from "./header.types";
 

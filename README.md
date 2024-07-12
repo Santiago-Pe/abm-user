@@ -87,3 +87,33 @@ La lista de usuarios se puede ver en la sección de gestión de usuarios. Aquí 
 - eslint: Herramienta para identificar y reportar patrones en ECMAScript/JavaScript.
 - eslint-config-next: Configuración de ESLint específica para Next.js.
 - typescript: Lenguaje de programación que es un superconjunto de JavaScript.
+
+## Ejecución con Docker
+
+### Requisitos Previos
+
+Asegúrate de tener Docker instalado en tu máquina. Puedes descargarlo desde [Docker's official website](https://www.docker.com/).
+
+### Construir la Imagen Docker
+
+Para ejecutar la aplicación utilizando Docker, primero necesitas construir la imagen Docker. Asegúrate de estar en el directorio raíz del proyecto donde se encuentra el Dockerfile.
+
+```bash
+docker build . --file Dockerfile --tag nombre_usuario/abm-user:latest
+```
+
+Reemplaza nombre_usuario con tu nombre de usuario de Docker Hub o el registro donde desees almacenar la imagen.
+
+### Ejecutar el Contenedor Docker
+
+Una vez construida la imagen, puedes ejecutar el contenedor Docker utilizando el siguiente comando:
+
+```bash
+docker run -p 3000:3000 nombre_usuario/abm-user:latest
+```
+
+Este comando ejecuta el contenedor y redirige el puerto 3000 del contenedor al puerto 3000 de tu máquina local, donde se ejecutará la aplicación.
+
+### Acceder a la Aplicación
+
+Abre un navegador web y navega a http://localhost:3000 para acceder a la aplicación. Ahora deberías poder interactuar con la aplicación web desarrollada con Next.js, React, TypeScript y PrimeReact utilizando Docker.

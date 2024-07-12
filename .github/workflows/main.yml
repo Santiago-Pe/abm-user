@@ -1,0 +1,31 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set timestamp
+        id: timestamp
+        run: echo "::set-output name=timestamp::$(date +%s)"
+
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag santiagope97/abm-user:${{ steps.timestamp.outputs.timestamp }}
+
+      - name: Log in to Docker Hub
+        run: echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+      - name: Tag Docker image
+        run: docker tag santiagope97/abm-user:${{ steps.timestamp.outputs.timestamp }} ${{ secrets.DOCKERHUB_USERNAME }}/abm-user:latest
+
+      - name: Push Docker image to Docker Hub
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/abm-user:latest
